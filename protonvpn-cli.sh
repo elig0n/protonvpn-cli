@@ -167,7 +167,6 @@ function init_cli() {
 
   rm -rf "$(get_protonvpn_cli_home)/"  # Previous profile will be removed/overwritten, if any.
   mkdir -p "$(get_protonvpn_cli_home)/"
-
   create_vi_bindings
 
   read -p "Enter OpenVPN username: " "openvpn_username"
@@ -222,7 +221,13 @@ function init_cli() {
   rm -rf "$config_cache_path"
   mkdir -p "$config_cache_path"  # Folder for openvpn config cache.
 
-  chown -R "$USER:$(id -gn $USER)" "$(get_protonvpn_cli_home)/"
+  if [[ -z "$SUDO_USER" ]]; then
+    CURRENT_USER="$(whoami)"
+  else
+    CURRENT_USER="$SUDO_USER"
+  fi
+  
+  chown -R "$CURRENT_USER:$(id -gn $CURRENT_USER)" "$(get_protonvpn_cli_home)/"
   chmod -R 0400 "$(get_protonvpn_cli_home)/"
 
   echo "[*] Done."
